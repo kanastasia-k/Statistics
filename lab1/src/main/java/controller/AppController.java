@@ -16,6 +16,8 @@ import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 
 public class AppController {
     private final AppView view;
@@ -44,10 +46,6 @@ public class AppController {
         if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             String fileName = file.getName();
-            if (!fileName.endsWith(".xlsx")) {
-                Error.showError("Ошибка: выбранный файл не является файлом нужного формата");
-                return;
-            }
         
             try (FileInputStream fis = new FileInputStream(file);
             Workbook workbook = new XSSFWorkbook(fis)) {
@@ -87,7 +85,9 @@ public class AppController {
                     view.getOutputArea().setText("Данные успешно импортированы");
                 }
             } catch (IOException ex) {
-                Error.showError("Ошибка импорта: " + ex.getMessage());
+                Error.showError("Ошибка чтения файла: " + ex.getMessage());
+            } catch (Exception e) {
+                Error.showError("Файл не является корректным Excel-документом (.xlsx)");
             }
         }
     }
