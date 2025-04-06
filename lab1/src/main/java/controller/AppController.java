@@ -16,8 +16,8 @@ import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 
 public class AppController {
     private final AppView view;
@@ -84,10 +84,12 @@ public class AppController {
                     }
                     view.getOutputArea().setText("Данные успешно импортированы");
                 }
-            } catch (IOException ex) {
-                Error.showError("Ошибка чтения файла: " + ex.getMessage());
-            } catch (Exception e) {
+            } catch (POIXMLException | NotOfficeXmlFileException e) {
                 Error.showError("Файл не является корректным Excel-документом (.xlsx)");
+            } catch (IOException e) {
+                Error.showError("Ошибка чтения файла: " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                Error.showError("Ошибка чтения файла: " + e.getMessage());
             }
         }
     }
